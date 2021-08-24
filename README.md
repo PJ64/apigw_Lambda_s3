@@ -41,7 +41,7 @@ cdk deploy
 ```bash
 {
   "order": {
-    "orderid": "3",
+    "orderid": "1",
     "coffeetype": "Flat white",
     "coffeesize": "Small",
     "vendorid": "1"
@@ -58,7 +58,7 @@ curl <api gateway>/invoice -d '@data.json' -H "Content-Type: application/json"
 7. Use Curl or browse to the api, making sure you pass a query string parameter with your orderid.
 
 ```bash
-curl <api gateway>/invoice?orderid=3
+curl <api gateway>/invoice?orderid=1
 ```
 
 8. Follow the pre-signed url that was return and you will see the object.
