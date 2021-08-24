@@ -11,16 +11,26 @@ export class ApigwLambdaS3Stack extends cdk.Stack {
     const s3_bucket = new Bucket(this, "S3Bucket" )
     
     //Setup IAM security for Lambda
-    const lambda_service_role = new Role(this, "IamRole",{
+    const lambda_service_role_put = new Role(this, "IamRole-put",{
         assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
-        roleName: "apigw_lambda_s3"
+        roleName: "apigw_lambda_s3_put"
     });
 
-    lambda_service_role.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole"));
-    
-    lambda_service_role.addToPolicy(new PolicyStatement({
-      resources: [s3_bucket.bucketArn],
+    const lambda_service_role_get = new Role(this, "IamRole-get",{
+      assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
+      roleName: "apigw_lambda_s3_get"
+    });
+
+    lambda_service_role_put.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole"));
+    lambda_service_role_get.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole"));
+
+    lambda_service_role_put.addToPolicy(new PolicyStatement({
+      resources: [s3_bucket.bucketArn, s3_bucket.bucketArn + "/*"],
       actions: ['s3:PutObject'],
+    }));
+    lambda_service_role_get.addToPolicy(new PolicyStatement({
+      resources: [s3_bucket.bucketArn, s3_bucket.bucketArn + "/*"],
+      actions: ['s3:GetObject'],
     }));
 
     //Create 2 Lambda function. One for put object and pre-signed url
@@ -29,12 +39,23 @@ export class ApigwLambdaS3Stack extends cdk.Stack {
       handler: "lambda_handler.lambda_handler",
       code: Code.fromAsset("resources/function_put_object"),
       functionName: "put_s3_object",
-      role: lambda_service_role,
+      role: lambda_service_role_put,
       environment: {
         'BUCKETNAME': s3_bucket.bucketName
       }
     });
     
+    const lambda_get_presigned_url = new Function(this, "GetUrlLambdaFunction",{
+      runtime: Runtime.PYTHON_3_7,
+      handler: "lambda_handler.lambda_handler",
+      code: Code.fromAsset("resources/function_get_presigned_url"),
+      functionName: "get_presigned_url",
+      role: lambda_service_role_get,
+      environment: {
+        'BUCKETNAME': s3_bucket.bucketName
+      }
+    });
+
     //Create REST Api and integrate the Lambda function
     var api = new RestApi(this, "InvoiceApi",{
       restApiName: "apigateway_lambda_s3",
@@ -49,8 +70,10 @@ export class ApigwLambdaS3Stack extends cdk.Stack {
         }
     });
 
+    var function_get_integration = new LambdaIntegration(lambda_get_presigned_url);
+
     var apiresource = api.root.addResource("invoice");
     apiresource.addMethod("POST", function_api_integration);
-    
+    apiresource.addMethod("GET", function_get_integration);
   }
 }

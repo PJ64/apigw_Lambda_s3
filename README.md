@@ -52,5 +52,13 @@ cdk deploy
 6. You can also test using curl , make sure you replace `<api gateway>` with your gateway address and change the orderid in data.json for each execution. 
 
 ```bash
-curl <api gateway>/order -d '@data.json' -H "Content-Type: application/json"
+curl <api gateway>/invoice -d '@data.json' -H "Content-Type: application/json"
 ```
+
+7. Use Curl or browse to the api, making sure you pass a query string parameter with your orderid.
+
+```bash
+curl <api gateway>/invoice?orderid=3
+```
+
+8. Follow the pre-signed url that was return and you will see the object.
