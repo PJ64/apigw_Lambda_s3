@@ -8,7 +8,10 @@ export class ApigwLambdaS3Stack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const s3_bucket = new Bucket(this, "S3Bucket" )
+    const s3_bucket = new Bucket(this, "S3Bucket" ,{
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      autoDeleteObjects: true
+    })
     
     //Setup IAM security for Lambda
     const lambda_service_role_put = new Role(this, "IamRole-put",{
