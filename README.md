@@ -8,11 +8,6 @@ This is a basic CDK TypeScript example that deploys 2 AWS Lambda functions. One 
 
 2. The second script requests a pre-signed URL through the Amazon API Gateway.
 
-Note: Make sure you set gwid to your gateway id using - gwid = '...'
-
-Post order
-
-
 ## Setup
 
 1. The following prerequisities are required for this example
