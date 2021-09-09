@@ -4,6 +4,8 @@ This is a basic CDK TypeScript example that deploys 2 AWS Lambda functions. One 
 ![architecture](./images/architecture_2.png "Architecture")
 
 
+**Jupyter Notebook Scripts**
+
 1. The first script will send a request to the Amazon API Gateway, the AWS Lambda integrated with the API will write the request body as an object to Amazon S3.
 
 2. The second script requests a pre-signed URL through the Amazon API Gateway.
