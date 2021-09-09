@@ -1,7 +1,17 @@
 ## Example
-This is a basic CDK TypeScript example that deploys 2 AWS Lambda functions. One function will be used to put an object into Amazon S3 while the other is used to generate a pre-signed url that will be used to download the object from Amazon S3.
+This is a basic CDK TypeScript example that deploys 2 AWS Lambda functions. One function will be used to put an object into Amazon S3, the second Lambda function is used to generate a pre-signed url that will be used to download the object from Amazon S3.
 
-![architecture](./images/architecture_1.png "Architecture")
+![architecture](./images/architecture_2.png "Architecture")
+
+
+1. The first script will send a request to the Amazon API Gateway, the AWS Lambda integrated with the API will write the request body as an object to Amazon S3.
+
+2. The second script requests a pre-signed URL through the Amazon API Gateway.
+
+Note: Make sure you set gwid to your gateway id using - gwid = '...'
+
+Post order
+
 
 ## Setup
 
@@ -11,6 +21,7 @@ This is a basic CDK TypeScript example that deploys 2 AWS Lambda functions. One 
 npm install -g typescript
 npm install -g aws-cdk
 ```
+Install Jupyter Notebook following instructions on this ['site'](https://jupyter.org/install).
 
 2. Since this CDK project uses ['Assests'](https://docs.aws.amazon.com/cdk/latest/guide/assets.html), you might need to run the following command to provision resources the AWS CDK will need to perform the deployment.
 
@@ -36,29 +47,6 @@ cdk synth
 cdk deploy
 ```
 
-5. The API Gateway will be deployed by the stack and can be tested using the following json object.
+5. Open the Jupyter Notebook in the **jupyter_notebook directory** follow the instructions.
 
-```bash
-{
-  "order": {
-    "orderid": "1",
-    "coffeetype": "Flat white",
-    "coffeesize": "Small",
-    "vendorid": "1"
-  }
-}
-```
-
-6. You can also test using curl , make sure you replace `<api gateway>` with your gateway address and change the orderid in data.json for each execution. 
-
-```bash
-curl <api gateway>/invoice -d '@data.json' -H "Content-Type: application/json"
-```
-
-7. Use Curl or browse to the api, making sure you pass a query string parameter with your orderid.
-
-```bash
-curl <api gateway>/invoice?orderid=1
-```
-
-8. Follow the pre-signed url that was return and you will see the object.
+6. Check the Amazon S3 bucket for the objects.

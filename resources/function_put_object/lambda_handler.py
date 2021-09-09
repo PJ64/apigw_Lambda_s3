@@ -1,27 +1,30 @@
-import boto3
-import json
-import logging
-import os
+import boto3, datetime, json,os, logging
 from botocore.exceptions import ClientError
+dt = datetime.datetime.today()
 
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+
+s3 = boto3.resource('s3')
+bucket = s3.Bucket(os.environ.get('BUCKETNAME'))
 
 def lambda_handler(event, context):
-    s3 = boto3.resource('s3')
-    bucket = s3.Bucket(os.environ.get('BUCKETNAME'))
-    
+
     body =json.loads(event["body"])
-    orderid = body["order"]["orderid"]      
+    accountid = body["order"]["accountid"]      
     message = json.dumps(body)
     data = message.encode("utf-8")
-    path = 'orderid_' + orderid + '.json'
+
+    period = str(dt.year) + "/" + str(dt.month)
+    accountid = body['order']['accountid']
+
+    key = period + '/' + accountid + '.json'
 
     try:
         bucket.put_object(
             ContentType='application/json',
-            Key=path,
+            Key=key,
             Body=data,
+            Metadata={'accountid':accountid}
         )
         logger.info("PutObject to bucket %s.",bucket)
         return {

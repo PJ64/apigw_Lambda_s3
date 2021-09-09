@@ -41,7 +41,7 @@ export class ApigwLambdaS3Stack extends cdk.Stack {
       runtime: Runtime.PYTHON_3_7,
       handler: "lambda_handler.lambda_handler",
       code: Code.fromAsset("resources/function_put_object"),
-      functionName: "put_s3_object",
+      functionName: "apigw_lambda_s3_put",
       role: lambda_service_role_put,
       environment: {
         'BUCKETNAME': s3_bucket.bucketName
@@ -52,7 +52,7 @@ export class ApigwLambdaS3Stack extends cdk.Stack {
       runtime: Runtime.PYTHON_3_7,
       handler: "lambda_handler.lambda_handler",
       code: Code.fromAsset("resources/function_get_presigned_url"),
-      functionName: "get_presigned_url",
+      functionName: "apigw_lambda_s3_get_url",
       role: lambda_service_role_get,
       environment: {
         'BUCKETNAME': s3_bucket.bucketName

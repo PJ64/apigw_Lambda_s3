@@ -5,13 +5,12 @@ import os
 from botocore.exceptions import ClientError
 
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
 
 def lambda_handler(event, context):
     queryParam = event["queryStringParameters"]
     try:
         s3_client = boto3.client('s3')
-        key = 'orderid_' + queryParam["orderid"] + '.json'
+        key = queryParam["objectKey"] + '.json'
         response = s3_client.generate_presigned_url('get_object',
                                                     Params={'Bucket': os.environ.get('BUCKETNAME'),
                                                             'Key': key},
